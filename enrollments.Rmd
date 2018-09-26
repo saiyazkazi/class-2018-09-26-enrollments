@@ -2,18 +2,29 @@
 title: "Enrollments"
 author: "Saiyaz Kazi"
 date: "9/26/2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-
+library(knitr)
 ```
 
-```{r}
-x <- read_rds("enrollment.rds")
-x %>% 
-  select(course_name, u_grad)
+```{r, echo=FALSE}
+x <- read_rds("enrollment.rds") %>% 
+  filter (!is.na(course_name)) %>% 
+  select(course_name,course_title,course_department, u_grad) %>% 
+  arrange(desc(u_grad))
+
+y <- x %>% 
+   mutate(c_length=nchar(course_name)) %>% 
+  select(course_department, course_title, course_name, c_length, u_grad) %>% 
+  arrange(c_length) %>% 
+  slice(1:7) 
+
+y %>% kable(caption="Enrollments")
 ```
 
